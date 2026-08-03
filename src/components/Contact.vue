@@ -60,6 +60,9 @@ onMounted(async() => {
 		const grecaptcha = await loadRecaptchaScript();
 
 		grecaptcha.ready(() => {
+			console.log("Container:", recaptchaContainer.value);
+		    console.log("Container exists:", !!recaptchaContainer.value);
+		    console.log("Site key before render:", RECAPTCHA_SITE_KEY);
 			recaptchaWidgetId.value = grecaptcha.render(recaptchaContainer.value, {
 				sitekey: RECAPTCHA_SITE_KEY,
 				callback: (token) => {
@@ -134,7 +137,7 @@ const submitForm = async () => {
 		} finally {
 			isLoading.value = false;
 		}
-};
+}
 
 </script>
 
