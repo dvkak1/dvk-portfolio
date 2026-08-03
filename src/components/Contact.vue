@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import {Notyf} from "notyf";
+import "notyf/notyf.min.css";
 
 const notyf = new Notyf();
 
@@ -45,7 +46,7 @@ onMounted(async() => {
 	});
 });
 
-onBeforeMount(() => {
+onBeforeUnmount(() => {
 	delete window.__onRecaptchaLoad;
 })
 
@@ -57,6 +58,7 @@ function resetCaptcha() {
 }
 
 const submitForm = async () => {
+	    isLoading.value="true";
 		try{
 			const response = await fetch(WEB3FORMS_ENDPOINT, {
 				method: "POST",
@@ -64,13 +66,13 @@ const submitForm = async () => {
 					"Content-Type" : "application/json",
 					Accept: "application/json"
 				},
-				body: {
+				body: JSON.stringify({
 					access_key: WEB3FORMS_ACCESS_KEY,
 					subject: subject,
 					name: name.value,
 					email: email.value,
 					message: message.value
-				}
+				})
 			})
 
 			const result = await response.json();
@@ -100,10 +102,9 @@ const submitForm = async () => {
 		<div class="row justify-content-stretch align-items-stretch" id="contact">
 	
 			<div class="col py-5 px-5" id="contact_form">
-				<form class="mt-5 p-5" action="https://api.web3forms.com/submit" method="POST">
+				<form class="mt-5 p-5" action="https://api.web3forms.com/submit" @submit.prevent="submitForm" method="POST">
 					<h2 class="mt-5 mb-5">CONTACT US</h2>
 					<p>Feel free to message me and let's get a website developed</p>
-					<input type="hidden" name="access_key" value="b2cbca3e-34f9-4dd-8f50-921abbf53db9">
 					<div class="mt-5 mb-4">
 					    <label for="name" class="form-label">Name</label>
 					    <input type="text" class="form-control" id="name" v-model="name" required>
@@ -120,7 +121,7 @@ const submitForm = async () => {
 					<div class="mb-4" ref="recaptchaContainer" v-show="RECAPTCHA_SITE_KEY"></div>
 
 
-					<button type="button" class="float-end mt-3 btn rounded-pill p-2" data-bs-toggle="" data-bs-target="">
+					<button type="submit" class="float-end mt-3 btn rounded-pill p-2" data-bs-toggle="" data-bs-target="">
 				        {{ isLoading ? 'Sending...' : 'Submit'}}
 				    </button>
 				</form>
