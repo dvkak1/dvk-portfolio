@@ -21,63 +21,28 @@ const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
 const subject = "A user sent a message from your WebPortfolio"; 
 
 
-function loadRecaptchaScript() {
-	return new Promise((resolve, reject) => {
-		if(window.grecaptcha && window.grecaptcha.render) {
-			resolve(window.grecaptcha);
-			return;
-		}
+onMounted(() => {
+  window.grecaptcha.ready(() => {
+    try {
+      recaptchaWidgetId.value = window.grecaptcha.render(
+        recaptchaContainer.value,
+        {
+          sitekey: RECAPTCHA_SITE_KEY,
+          callback: (token) => {
+            captchaToken.value = token;
+          },
+          "expired-callback": () => {
+            captchaToken.value = "";
+          }
+        }
+      );
 
-		const script = document.createElement("script");
+      console.log("Rendered widget:", recaptchaWidgetId.value);
 
-		script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
-		script.async = true;
-		script.defer = true;
-
-		script.onload = () => {
-			if(window.grecaptcha) {
-				resolve(window.grecaptcha);
-			} else {
-				reject(new Error("grecaptcha not available after script load."));
-			}
-		};
-
-		script.onerror = () => reject(new Error("Failed to load reCAPTCHA script."));
-
-		document.head.appendChild(script);
-		
-	});
-}
-
-onMounted(async() => {
-	try {
-		console.log("Site key:" , RECAPTCHA_SITE_KEY);
-
-		if(!RECAPTCHA_SITE_KEY) {
-			throw new Error("Missing site key.");
-		}
-
-		const grecaptcha = await loadRecaptchaScript();
-
-		grecaptcha.ready(() => {
-			console.log("Container:", recaptchaContainer.value);
-		    console.log("Container exists:", !!recaptchaContainer.value);
-		    console.log("Site key before render:", RECAPTCHA_SITE_KEY);
-			recaptchaWidgetId.value = grecaptcha.render(recaptchaContainer.value, {
-				sitekey: RECAPTCHA_SITE_KEY,
-				callback: (token) => {
-					captchaToken.value = token;
-					console.log("Captcha token received:", token);
-				}, 
-				"expired-callback": () => {
-					captchaToken.value = "";
-				},
-			});
-		});
-
-		} catch(err) {
-			console.err(err);
-		}
+    } catch (error) {
+      console.error("RECAPTCHA ERROR:", error);
+    }
+  });
 });
 
 onBeforeUnmount(() => {
