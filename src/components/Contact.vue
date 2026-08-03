@@ -22,7 +22,7 @@ const subject = "A user sent a message from your WebPortfolio";
 
 
 function loadRecaptchaScript() {
-	return new Promise((resolve) => {
+	return new Promise((resolve, reject) => {
 		if(window.grecaptcha && window.grecaptcha.render) {
 			resolve(window.grecaptcha);
 			return;
@@ -42,7 +42,7 @@ function loadRecaptchaScript() {
 			}
 		};
 
-		script onerror = () => reject(new Error("Failed to load reCAPTCHA script."));
+		script.onerror = () => reject(new Error("Failed to load reCAPTCHA script."));
 
 		document.head.appendChild(script);
 		
@@ -60,19 +60,21 @@ onMounted(async() => {
 		const grecaptcha = await loadRecaptchaScript();
 
 		grecaptcha.ready(() => {
-			grecaptcha.render(recaptchaContainer.value, {
-                sitekey: RECAPTCHA_SITE_KEY,
-                callback: (token) => {
-                   captchaToken.value = "";
-                },
-                "expired-callback": () => {
-                	captchaToken.value = "";
-                },
+			recaptchaWidgetId.value = grecaptcha.render(recaptchaContainer.value, {
+				sitekey: RECAPTCHA_SITE_KEY,
+				callback: (token) => {
+					captchaToken.value = token;
+					console.log("Captcha token received:", token);
+				}, 
+				"expired-callback": () => {
+					captchaToken.value = "";
+				},
 			});
 		});
-	} catch(err) {
-		console.error(err);
-	}
+
+		} catch(err) {
+			console.err(err);
+		}
 });
 
 onBeforeUnmount(() => {
@@ -81,43 +83,58 @@ onBeforeUnmount(() => {
 
 function resetCaptcha() {
 	captchaToken.value = "";
+
 	if(window.grecaptcha && recaptchaWidgetId.value !== null) {
 		window.grecaptcha.reset(recaptchaWidgetId.value);
 	}
 }
 
 const submitForm = async () => {
+	    if(!captchaToken.value) {
+          notyf.error("Please complete the reCAPTCHA.");
+          return;
+	    }
+
 	    isLoading.value= true;
+
 		try{
 			const response = await fetch(WEB3FORMS_ENDPOINT, {
 				method: "POST",
 				headers: {
 					"Content-Type" : "application/json",
-					Accept: "application/json"
+					Accept: "application/json",
 				},
 				body: JSON.stringify({
 					access_key: WEB3FORMS_ACCESS_KEY,
-					subject: subject,
+					subject,
 					name: name.value,
 					email: email.value,
 					message: message.value,
 					recaptcha_response: captchaToken.value
-				})
-			})
+				}),
+			});
 
 			const result = await response.json();
 
 			if(result.success){
 				isLoading.value = false
-				notyf.success("Message Sent! ")
+				notyf.success("Message Sent! ");
+
+				name.value = "";
+				email.value = "";
+				message.value = "";
+
+				resetCaptcha();
+			} else {
+                notyf.error(result.message || "Failed to send message");
 			}
-		}
-		catch(error){
-			console.log(error);
-			isLoading.value = false;
+		} catch(error){
+			console.error(error);
 			notyf.error("Failed to send message");
+		} finally {
+			isLoading.value = false;
 		}
-}
+};
 
 </script>
 
