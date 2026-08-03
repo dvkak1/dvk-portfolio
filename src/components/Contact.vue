@@ -42,7 +42,7 @@ onMounted(async() => {
 	recaptchaWidgetId.value = window.grecaptcha.render(recaptchaContainer.value, {
 		sitekey: RECAPTCHA_SITE_KEY,
 		callback: (token) => {captchaToken.value = token; },
-		"expired callback": () => {captchaToken.value = ""; },
+		"expired-callback": () => {captchaToken.value = ""; },
 	});
 });
 
@@ -53,12 +53,12 @@ onBeforeUnmount(() => {
 function resetCaptcha() {
 	captchaToken.value = "";
 	if(window.grecaptcha && recaptchaWidgetId.value !== null) {
-		window.grecaptcha.reset(recaptcha.WidgetId.value);
+		window.grecaptcha.reset(recaptchaWidgetId.value);
 	}
 }
 
 const submitForm = async () => {
-	    isLoading.value="true";
+	    isLoading.value= true;
 		try{
 			const response = await fetch(WEB3FORMS_ENDPOINT, {
 				method: "POST",
@@ -71,7 +71,8 @@ const submitForm = async () => {
 					subject: subject,
 					name: name.value,
 					email: email.value,
-					message: message.value
+					message: message.value,
+					recaptcha_response: captchaToken.value
 				})
 			})
 
@@ -118,7 +119,7 @@ const submitForm = async () => {
 					    <textarea class="form-control" id="message" rows="7" v-model="message" required></textarea>
 					</div>
 
-					<div class="mb-4" ref="recaptchaContainer" v-show="RECAPTCHA_SITE_KEY"></div>
+					<div class="mb-4" ref="recaptchaContainer"></div>
 
 
 					<button type="submit" class="float-end mt-3 btn rounded-pill p-2" data-bs-toggle="" data-bs-target="">
