@@ -24,26 +24,55 @@ const subject = "A user sent a message from your WebPortfolio";
 function loadRecaptchaScript() {
 	return new Promise((resolve) => {
 		if(window.grecaptcha && window.grecaptcha.render) {
-			resolve();
+			resolve(window.grecaptcha);
 			return;
 		}
-		window.__onRecaptchaLoad = () => resolve();
+
 		const script = document.createElement("script");
-		script.src = "https://www.google.com/recaptcha/api.js?onload=__onRecaptchaLoad&render=explicit";
+
+		script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
 		script.async = true;
 		script.defer = true;
+
+		script.onload = () => {
+			if(window.grecaptcha) {
+				resolve(window.grecaptcha);
+			} else {
+				reject(new Error("grecaptcha not available after script load."));
+			}
+		};
+
+		script onerror = () => reject(new Error("Failed to load reCAPTCHA script."));
+
 		document.head.appendChild(script);
-	})
+		
+	});
 }
 
 onMounted(async() => {
-	if(!RECAPTCHA_SITE_KEY) return;
-	await loadRecaptchaScript();
-	recaptchaWidgetId.value = window.grecaptcha.render(recaptchaContainer.value, {
-		sitekey: RECAPTCHA_SITE_KEY,
-		callback: (token) => {captchaToken.value = token; },
-		"expired-callback": () => {captchaToken.value = ""; },
-	});
+	try {
+		console.log("Site key:" , RECAPTCHA_SITE_KEY);
+
+		if(!RECAPTCHA_SITE_KEY) {
+			throw new Error("Missing site key.");
+		}
+
+		const grecaptcha = await loadRecaptchaScript();
+
+		grecaptcha.ready(() => {
+			grecaptcha.render(recaptchaContainer.value, {
+                sitekey: RECAPTCHA_SITE_KEY,
+                callback: (token) => {
+                   captchaToken.value = "";
+                },
+                "expired-callback": () => {
+                	captchaToken.value = "";
+                },
+			});
+		});
+	} catch(err) {
+		console.error(err);
+	}
 });
 
 onBeforeUnmount(() => {
