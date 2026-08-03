@@ -58,51 +58,47 @@ function resetCaptcha() {
 }
 
 const submitForm = async () => {
-	    if(!captchaToken.value) {
-          notyf.error("Please complete the reCAPTCHA.");
-          return;
-	    }
+  isLoading.value = true;
 
-	    isLoading.value= true;
+  try {
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        access_key: WEB3FORMS_ACCESS_KEY,
+        name: name.value,
+        email: email.value,
+        message: message.value,
+        subject: subject,
+        "g-recaptcha-response": captchaToken.value,
+      }),
+    });
 
-		try{
-			const response = await fetch(WEB3FORMS_ENDPOINT, {
-				method: "POST",
-				headers: {
-					"Content-Type" : "application/json",
-					Accept: "application/json",
-				},
-				body: JSON.stringify({
-					access_key: WEB3FORMS_ACCESS_KEY,
-					subject,
-					name: name.value,
-					email: email.value,
-					message: message.value,
-					recaptcha_response: captchaToken.value
-				}),
-			});
+    const result = await response.json();
 
-			const result = await response.json();
+    if (result.success) {
+      notyf.success("Message Sent!");
 
-			if(result.success){
-				isLoading.value = false
-				notyf.success("Message Sent! ");
+      name.value = "";
+      email.value = "";
+      message.value = "";
 
-				name.value = "";
-				email.value = "";
-				message.value = "";
+      resetCaptcha();
+    } else {
+      notyf.error(result.message || "Failed to send message");
+      console.error(result);
+    }
 
-				resetCaptcha();
-			} else {
-                notyf.error(result.message || "Failed to send message");
-			}
-		} catch(error){
-			console.error(error);
-			notyf.error("Failed to send message");
-		} finally {
-			isLoading.value = false;
-		}
-}
+  } catch (error) {
+    console.error(error);
+    notyf.error("Failed to send message");
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 </script>
 
