@@ -1,0 +1,45 @@
+[
+    {  
+        "id": 1,
+        "title": "E-commerce API Documentation",
+        "description": "Dynamic E-Commerce Workflow Management. The system features dynamic routes for order processing, real-time inventory updates, and secure user authentication. It also supports seamless automated order reporting and comprehensive product management.\n Documented Backend API published publicly using Postman.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNOWxkqSZtJlujFAoWwgby2_-WUVB06-fQ7QtLVk5wWMB604DQSTQi008&s="
+    },
+    {
+        "id": 2,
+        "title": "Course Booking API Documentation",
+        "description": "RESTful API for managing course enrollments, featuring user registration, authentication, and retrieval of user details. Supports course creation, updates, archiving, activation, and student enrollment. Publicly documented using Postman.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrQrym5FvesS1JjOme5_3RS00dZf6NGSkM0D_K8ZrFOMzyJ09cLegv9HU&s=10"
+    },
+    {
+        "id": 3,
+        "title": "Course booking App",
+        "description": "A MERN-stack course enrollment system featuring user registration, authentication, and profile management. Authenticated users can create, update, archive, and activate courses. The platform also allows users to browse available courses and enroll seamlessly.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTElkUVbG1IAHCACoOKEEFYfXjWDV6d8W1p7fWmrLSKFW-85v8waK_18_M&s=10"
+    },
+    {
+        "id": 4,
+        "title": "E-commerce App",
+        "description": "MERN E-Commerce Platform. The platform features dynamic product catalog with filtering and sorting, real-time search, seamless cart updates, secure checkout, and a comprehensive admin dashboard with real-time analytics and user management capabilities.",
+        "image": "https://dotit.org/wp-content/uploads/2024/02/The-Ultimate-Guide-to-E-Commerce-Success-1.jpg"
+    },
+    {
+        "id": 5,
+        "title": "Airline Booking System Mockup",
+        "description": "Side Project: Conceptual design showcasing an intuitive UI for flight search, seat selection, and booking confirmation, focusing on user experience and workflow efficiency.",
+        "image": "https://media.licdn.com/dms/image/v2/D5612AQH2jsCS1OoLnQ/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1693327485330?e=2147483647&v=beta&t=F1VBi8U7_0ywXhwOyhEF8Bb6PFUpNykdaHy68euazEs"
+    },
+    {
+        "id": 6,
+        "title": "Airline Booking System Prototype",
+        "description": "Side Project: Interactive prototype simulating end-to-end airline booking functionalities, including flight search, reservation, payment processing, and real-time ticket management.",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2-zg6quKSSOf7ELMRf3k-WsCAAS8Em_OMXX-O-ALdAE1Xa7Vj0V_465Q&s=10"
+    },
+    {
+        "id": 7,
+        "title": "Short Courses Capstone",
+        "description": "Placeholder for your Short courses capstone project.",
+        "image": "https://media.istockphoto.com/id/1435220822/photo/african-american-software-developer.jpg?s=612x612&w=0&k=20&c=JESGRQ2xqRH9ZcJzvZBHZIZKVY8MDejBSOfxeM-i5e4="
+    }
+
+]
