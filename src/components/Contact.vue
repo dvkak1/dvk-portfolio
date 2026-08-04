@@ -73,7 +73,7 @@ const submitForm = async () => {
         email: email.value,
         message: message.value,
         subject: subject,
-        "g-recaptcha-response": captchaToken.value,
+        // "g-recaptcha-response": captchaToken.value,
       }),
     });
 
